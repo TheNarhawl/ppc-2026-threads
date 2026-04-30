@@ -12,7 +12,7 @@ class AkhmetovDStrassenDenseDoubleSTL : public BaseTask {
   }
   explicit AkhmetovDStrassenDenseDoubleSTL(const InType &in);
 
- private:
+ protected:
   bool ValidationImpl() override;
   bool PreProcessingImpl() override;
   bool RunImpl() override;

@@ -12,6 +12,8 @@
 
 namespace akhmetov_daniil_strassen_dense_double_stl {
 
+namespace {
+
 class AkhmetovDaniilRunFuncTestsSTL : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
  public:
   static std::string PrintTestParam(const TestType &test_param) {
@@ -24,17 +26,18 @@ class AkhmetovDaniilRunFuncTestsSTL : public ppc::util::BaseRunFuncTests<InType,
 
     const TestType n = std::get<2>(GetParam());
     input_data_.resize(1 + (2 * n * n));
-    input_data_[0] = static_cast<double>(n);
+    input_data_.at(0) = static_cast<double>(n);
 
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<double> dist(-10.0, 10.0);
 
     for (size_t i = 1; i < input_data_.size(); ++i) {
-      input_data_[i] = dist(gen);
+      input_data_.at(i) = dist(gen);
     }
   }
 
+ public:
   bool CheckTestOutputData(OutType &output_data) final {
     const InType input = GetTestInputData();
 
@@ -47,15 +50,15 @@ class AkhmetovDaniilRunFuncTestsSTL : public ppc::util::BaseRunFuncTests<InType,
       for (size_t j = 0; j < n; ++j) {
         double sum = 0.0;
         for (size_t k = 0; k < n; ++k) {
-          sum += a[(i * n) + k] * b[(k * n) + j];
+          sum += a.at((i * n) + k) * b.at((k * n) + j);
         }
-        expected[(i * n) + j] = sum;
+        expected.at((i * n) + j) = sum;
       }
     }
 
     constexpr double kEpsilon = 1e-7;
     for (size_t i = 0; i < n * n; ++i) {
-      if (std::abs(output_data[i] - expected[i]) > kEpsilon) {
+      if (std::abs(output_data.at(i) - expected.at(i)) > kEpsilon) {
         return false;
       }
     }
@@ -70,8 +73,6 @@ class AkhmetovDaniilRunFuncTestsSTL : public ppc::util::BaseRunFuncTests<InType,
   InType input_data_;
 };
 
-namespace {
-
 TEST_P(AkhmetovDaniilRunFuncTestsSTL, StrassenTestFunctional) {
   ExecuteTest(GetParam());
 }
@@ -79,7 +80,7 @@ TEST_P(AkhmetovDaniilRunFuncTestsSTL, StrassenTestFunctional) {
 const std::array<TestType, 10> kTestParam = {1, 2, 3, 5, 8, 9, 16, 64, 65, 257};
 
 const auto kTestTasksList = ppc::util::AddFuncTask<AkhmetovDStrassenDenseDoubleSTL, InType>(
-    kTestParam, PPC_SETTINGS_akhmetov_daniil_strassen_dense_double_stl);
+    kTestParam, "tasks/akhmetov_daniil_strassen_dense_double_stl/settings.json");
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 const auto kTestName = AkhmetovDaniilRunFuncTestsSTL::PrintFuncTestName<AkhmetovDaniilRunFuncTestsSTL>;

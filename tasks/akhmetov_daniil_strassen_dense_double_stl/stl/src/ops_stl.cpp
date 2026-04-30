@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <future>
-#include <utility>
 #include <vector>
 
 #include "akhmetov_daniil_strassen_dense_double_stl/common/include/common.hpp"
@@ -300,9 +299,9 @@ bool AkhmetovDStrassenDenseDoubleSTL::RunImpl() {
     output = Matrix(n * n, 0.0);
     for (std::size_t i = 0; i < n; ++i) {
       for (std::size_t k = 0; k < n; ++k) {
-        const double aik = a[(i * n) + k];
+        const double aik = a.at((i * n) + k);
         for (std::size_t j = 0; j < n; ++j) {
-          output[(i * n) + j] += aik * b[(k * n) + j];
+          output.at((i * n) + j) += aik * b.at((k * n) + j);
         }
       }
     }
