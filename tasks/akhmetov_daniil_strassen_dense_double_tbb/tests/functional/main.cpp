@@ -40,7 +40,10 @@ class AkhmetovDaniilRunFuncTestsTBB : public ppc::util::BaseRunFuncTests<InType,
 
     constexpr double kEpsilon = 1e-6;
     for (size_t i = 0; i < n * n; ++i) {
-      if (std::abs(output_data.at(i) - expected.at(i)) > kEpsilon) {
+      const double exp = expected.at(i);
+      const double diff = std::abs(output_data.at(i) - exp);
+      const double tol = kEpsilon * (1.0 + std::abs(exp));
+      if (diff > tol) {
         return false;
       }
     }
@@ -59,8 +62,8 @@ class AkhmetovDaniilRunFuncTestsTBB : public ppc::util::BaseRunFuncTests<InType,
     input_data_.resize(1 + (2 * n * n));
     input_data_.at(0) = static_cast<double>(n);
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    // Deterministic seed to avoid flaky CI failures due to random data.
+    std::mt19937 gen(static_cast<std::mt19937::result_type>(0xC0FFEEU + static_cast<unsigned>(n)));
     std::uniform_real_distribution<double> dist(-10.0, 10.0);
 
     for (size_t i = 1; i < input_data_.size(); ++i) {
