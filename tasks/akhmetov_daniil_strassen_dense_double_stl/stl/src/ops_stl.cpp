@@ -308,6 +308,12 @@ bool AkhmetovDStrassenDenseDoubleSTL::RunImpl() {
     return true;
   }
 
+  if ((n % 2U) != 0U) {
+    output.assign(n * n, 0.0);
+    NaiveMulBlocked(a.data(), n, b.data(), n, output.data(), n, n);
+    return true;
+  }
+
   const std::size_t padded = NextPow2(n);
   Matrix a_pad(padded * padded, 0.0);
   Matrix b_pad(padded * padded, 0.0);
